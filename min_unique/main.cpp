@@ -14,13 +14,12 @@ int kq(const int k[],int n)
     return mins;
 }
 
-
 int main()
 {
-    cin >>n;
-    int k[n];
+    cin >> n;
+    vector<int>k(n);
     for(int i=0;i<n;i++) cin >> k[i];
     a=kq(k,n);
-    cout <<a;
+    cout << a;
 
 }
