@@ -1,0 +1,7 @@
+# depslib dependency file v1.0
+1735889019 source:c:\c++\3(21-22)(daugianguoc)\main.cpp
+	<iostream>
+	<limits>
+	<vector>
+	<set>
+
