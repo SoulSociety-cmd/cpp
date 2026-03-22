@@ -2,7 +2,6 @@
 
 using namespace std;
 int n,i,d=0,x;
-int vector<int>a[i];
 bool check(int n){
     while (n>10){
     x=n%10;
@@ -14,7 +13,8 @@ bool check(int n){
 int main()
 {
     cin >> n;
-    for(i=1;i<=n;i++){
+    int vector<int>a(n);
+    for(i=0;i<n;i++){
      cin >> a[i];
     if (a[i]>10 && check(a[i])) d++;
     }
