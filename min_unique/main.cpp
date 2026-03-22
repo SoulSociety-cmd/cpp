@@ -6,7 +6,7 @@ int kq(const vector<int>& k,int n)
 {
     int mins=INT_MAX;
     unordered_map<int,int>fre;
-    for(auto& x:k)fre[k[i]]++;
+    for(auto& x:k)fre[x]++;
     for(const auto& [so,solan]:fre)
     {
         if(solan ==1 && so < mins) mins=so;
