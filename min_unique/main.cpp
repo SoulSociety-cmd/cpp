@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 
 using namespace std;
-int n,gia,a;
+int n,a;
 int kq(const vector<int>& k,int n)
 {
     int mins=INT_MAX;
