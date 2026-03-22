@@ -2,7 +2,7 @@
 
 using namespace std;
 int n,gia,a;
-int kq(const vector<int>&     k,int n)
+int kq(const vector<int>& k,int n)
 {
     int mins=INT_MAX;
     unordered_map<int,int>fre;
