@@ -1,6 +1,7 @@
-#include <iostream>
-int a[100][100],cost[100][100],dp[100][100];
+#include <bits/stdc++.h>
+
 using namespace std;
+
 void snt(int hang,int cot,int a[100][100])
 {
     for(int i=0;i<hang;i++)
@@ -11,7 +12,9 @@ void snt(int hang,int cot,int a[100][100])
 
 int main()
 {
+    vector<vector<int,int>> cost,dp;
     int n,m;cin>>m>>n;
+    vector<vector<int,int>> a(n,vector<int>(m));
     for(int i=0;i<m;i++)
     for(int j=0;j<n;j++) cin >> a[i][j];
     snt(m,n,a);dp[0][0]=cost[0][0];
