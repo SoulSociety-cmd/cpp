@@ -5,11 +5,10 @@ int main() {
     ios_base::sync_with_stdio(false);
     cin.tie(nullptr);
 
-    srand(time(0)); // seed
-    int ans = rand() % 100 + 1; // số bí mật
+    srand(time(0)); 
+    int ans = rand() % 100 + 1; 
     int n = -1, dem = 0;
 
-    cout << "So bi mat (test): " << ans << endl; // in ra để test
 
     while (n != ans) {
         cin >> n;
