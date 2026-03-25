@@ -8,8 +8,6 @@ int main() {
     srand(time(0)); 
     int ans = rand() % 100 + 1; 
     int n = -1, dem = 0;
-
-
     while (n != ans) {
         cin >> n;
         dem += 1;
@@ -17,6 +15,5 @@ int main() {
         else if (n < ans) cout << "low\n";
         else cout << "good\n";
     }
-
     cout << "Ban doan dung sau " << dem << " lan.\n";
 }
