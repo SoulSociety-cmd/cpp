@@ -1,0 +1,8 @@
+# depslib dependency file v1.0
+1791207505 source:c:\c++\qualinhapxuatvattu\main.cpp
+	<windows.h>
+	<conio.h>
+	<termios.h>
+	<unistd.h>
+	<bits/stdc++.h>
+
