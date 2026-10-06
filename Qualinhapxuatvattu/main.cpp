@@ -70,6 +70,47 @@ void clearScreen() {
 #endif
 }
 
+enum ConsoleColor {
+    C_BLACK = 30,
+    C_RED = 31,
+    C_GREEN = 32,
+    C_YELLOW = 33,
+    C_BLUE = 34,
+    C_MAGENTA = 35,
+    C_CYAN = 36,
+    C_WHITE = 37
+};
+
+void setConsoleColor(int fg, bool bold = false) {
+#ifdef _WIN32
+    HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
+    WORD attr = 0;
+    switch (fg) {
+        case C_BLACK: attr = 0; break;
+        case C_RED: attr = FOREGROUND_RED; break;
+        case C_GREEN: attr = FOREGROUND_GREEN; break;
+        case C_YELLOW: attr = FOREGROUND_RED | FOREGROUND_GREEN; break;
+        case C_BLUE: attr = FOREGROUND_BLUE; break;
+        case C_MAGENTA: attr = FOREGROUND_RED | FOREGROUND_BLUE; break;
+        case C_CYAN: attr = FOREGROUND_GREEN | FOREGROUND_BLUE; break;
+        case C_WHITE:
+        default: attr = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE; break;
+    }
+    if (bold) attr |= FOREGROUND_INTENSITY;
+    SetConsoleTextAttribute(h, attr);
+#else
+    cout << "\033[" << (bold ? "1;" : "") << fg << "m";
+#endif
+}
+
+void resetConsoleColor() {
+#ifdef _WIN32
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+#else
+    cout << "\033[0m";
+#endif
+}
+
 string trim(const string &s) {
     size_t a = s.find_first_not_of(" \t\r\n");
     if (a == string::npos) return "";
@@ -92,18 +133,36 @@ void pauseScreen() {
 // Ve khung: tieu de + danh sach dong
 void drawBox(const string &title, const vector<string> &lines, int w = 56) {
     string bar(w, '=');
+    setConsoleColor(C_CYAN, true);
     cout << "  +" << bar << "+\n";
+    resetConsoleColor();
     int pad = (w - (int)title.size()) / 2;
     if (pad < 0) pad = 0;
-    cout << "  |" << string(pad, ' ') << title
-         << string(max(0, w - pad - (int)title.size()), ' ') << "|\n";
+    setConsoleColor(C_CYAN, true);
+    cout << "  |";
+    resetConsoleColor();
+    setConsoleColor(C_GREEN, true);
+    cout << string(pad, ' ') << title
+         << string(max(0, w - pad - (int)title.size()), ' ');
+    resetConsoleColor();
+    setConsoleColor(C_CYAN, true);
+    cout << "|\n";
     cout << "  +" << bar << "+\n";
+    resetConsoleColor();
     for (size_t i = 0; i < lines.size(); i++) {
         string l = " " + lines[i];
         if ((int)l.size() > w) l = l.substr(0, w);
-        cout << "  |" << l << string(w - l.size(), ' ') << "|\n";
+        setConsoleColor(C_CYAN, true);
+        cout << "  |";
+        resetConsoleColor();
+        cout << l << string(w - l.size(), ' ');
+        setConsoleColor(C_CYAN, true);
+        cout << "|\n";
+        resetConsoleColor();
     }
+    setConsoleColor(C_CYAN, true);
     cout << "  +" << bar << "+\n";
+    resetConsoleColor();
 }
 
 void drawHeader(const string &title) {
@@ -205,11 +264,21 @@ void showCursor(bool show) {
 void drawItem(const string &text, bool selected, int w) {
     string l = string(selected ? "> " : "  ") + text;
     l.resize(w - 1, ' ');
+    setConsoleColor(C_CYAN, true);
     cout << "  |";
-    if (selected) setHighlight(true);
-    cout << " " << l;
-    if (selected) setHighlight(false);
+    resetConsoleColor();
+    if (selected) {
+        setConsoleColor(C_BLACK, true);
+        cout << " " << l;
+        resetConsoleColor();
+    } else {
+        setConsoleColor(C_WHITE, false);
+        cout << " " << l;
+        resetConsoleColor();
+    }
+    setConsoleColor(C_CYAN, true);
     cout << "|";
+    resetConsoleColor();
 }
 
 // Menu chon bang phim Len/Xuong. Tra ve chi so muc chon, hoac -1 neu bam Esc.
@@ -222,21 +291,37 @@ int selectMenu(const string &title, const vector<string> &items,
     clearScreen();
     markOrigin();
     string bar(w, '=');
+    setConsoleColor(C_CYAN, true);
     cout << "  +" << bar << "+\n";
+    resetConsoleColor();
     string t = title;
     if ((int)t.size() > w) t.resize(w);
     int pad = (w - (int)t.size()) / 2;
-    cout << "  |" << string(pad, ' ') << t << string(w - pad - t.size(), ' ') << "|\n";
+    setConsoleColor(C_CYAN, true);
+    cout << "  |";
+    resetConsoleColor();
+    setConsoleColor(C_GREEN, true);
+    cout << string(pad, ' ') << t << string(w - pad - t.size(), ' ');
+    resetConsoleColor();
+    setConsoleColor(C_CYAN, true);
+    cout << "|\n";
     cout << "  +" << bar << "+\n";
+    resetConsoleColor();
     for (int i = 0; i < n; i++) {
         drawItem(items[i], i == cur, w);
         cout << "\n";
     }
+    setConsoleColor(C_CYAN, true);
     cout << "  +" << bar << "+\n";
     cout << "  [Len/Xuong] Chon   [Enter] Xac nhan   [Esc] Quay lai\n";
+    resetConsoleColor();
     if (!info.empty()) {
         cout << "\n";
-        for (size_t i = 0; i < info.size(); i++) cout << "  " << info[i] << "\n";
+        for (size_t i = 0; i < info.size(); i++) {
+            setConsoleColor(C_YELLOW, true);
+            cout << "  " << info[i] << "\n";
+            resetConsoleColor();
+        }
     }
     showCursor(false);
     cout << flush;
@@ -266,19 +351,28 @@ int selectMenu(const string &title, const vector<string> &items,
 string inputStr(const string &label, size_t maxLen = 0, bool allowEmpty = false) {
     string s;
     while (true) {
-        cout << "  " << label << ": ";
+        setConsoleColor(C_GREEN, true);
+        cout << "  " << label;
+        resetConsoleColor();
+        cout << ": ";
         getline(cin, s);
         s = trim(s);
         if (s.empty() && !allowEmpty) {
+            setConsoleColor(C_RED, true);
             cout << "  ! Khong duoc de trong.\n";
+            resetConsoleColor();
             continue;
         }
         if (s.find('|') != string::npos) {
+            setConsoleColor(C_RED, true);
             cout << "  ! Khong duoc chua ky tu '|'.\n";
+            resetConsoleColor();
             continue;
         }
         if (maxLen > 0 && s.size() > maxLen) {
+            setConsoleColor(C_RED, true);
             cout << "  ! Toi da " << maxLen << " ky tu.\n";
+            resetConsoleColor();
             continue;
         }
         return s;
@@ -288,7 +382,10 @@ string inputStr(const string &label, size_t maxLen = 0, bool allowEmpty = false)
 int inputInt(const string &label, int lo, int hi) {
     string s;
     while (true) {
-        cout << "  " << label << ": ";
+        setConsoleColor(C_GREEN, true);
+        cout << "  " << label;
+        resetConsoleColor();
+        cout << ": ";
         getline(cin, s);
         s = trim(s);
         bool ok = !s.empty() && s.size() < 10;
@@ -298,7 +395,9 @@ int inputInt(const string &label, int lo, int hi) {
             int v = atoi(s.c_str());
             if (v >= lo && v <= hi) return v;
         }
+        setConsoleColor(C_RED, true);
         cout << "  ! Nhap so nguyen tu " << lo << " den " << hi << ".\n";
+        resetConsoleColor();
     }
 }
 
@@ -373,7 +472,9 @@ string inputDate(const string &label) {
     while (true) {
         string s = inputStr(label, 10);
         if (dateKey(s) != 0) return s;
+        setConsoleColor(C_RED, true);
         cout << "  ! Ngay khong hop le (dang dd/mm/yyyy, vi du 05/03/2026).\n";
+        resetConsoleColor();
     }
 }
 
@@ -384,8 +485,10 @@ double inputDouble(const string &label, double lo, double hi, bool loExclusive) 
         double v = strtod(s.c_str(), &e);
         bool ok = (*e == '\0') && v <= hi && (loExclusive ? v > lo : v >= lo);
         if (ok) return v;
+        setConsoleColor(C_RED, true);
         cout << "  ! Nhap so " << (loExclusive ? "lon hon " : "tu ") << fmtMoney(lo)
              << " den " << fmtMoney(hi) << ".\n";
+        resetConsoleColor();
     }
 }
 
@@ -399,14 +502,33 @@ void showTable(const string &title, const vector<string> &head, const vector<str
         clearScreen();
         drawBox(title, vector<string>(), w);
         cout << "\n";
-        for (size_t i = 0; i < head.size(); i++) cout << "  " << head[i] << "\n";
+        for (size_t i = 0; i < head.size(); i++) {
+            setConsoleColor(C_YELLOW, true);
+            cout << "  " << head[i] << "\n";
+            resetConsoleColor();
+        }
+        setConsoleColor(C_CYAN, true);
         cout << "  " << string(w, '-') << "\n";
-        if (total == 0) cout << "  (Khong co du lieu)\n";
-        for (int i = pg * pageSize; i < min(total, (pg + 1) * pageSize); i++)
+        resetConsoleColor();
+        if (total == 0) {
+            setConsoleColor(C_YELLOW, true);
+            cout << "  (Khong co du lieu)\n";
+            resetConsoleColor();
+        }
+        for (int i = pg * pageSize; i < min(total, (pg + 1) * pageSize); i++) {
+            setConsoleColor(C_WHITE, false);
             cout << "  " << rows[i] << "\n";
+            resetConsoleColor();
+        }
+        setConsoleColor(C_CYAN, true);
         cout << "  " << string(w, '-') << "\n";
+        resetConsoleColor();
         if (pg == pages - 1)
-            for (size_t i = 0; i < foot.size(); i++) cout << "  " << foot[i] << "\n";
+            for (size_t i = 0; i < foot.size(); i++) {
+                setConsoleColor(C_GREEN, true);
+                cout << "  " << foot[i] << "\n";
+                resetConsoleColor();
+            }
         cout << "\n  Trang " << (pg + 1) << "/" << pages;
         if (pages > 1) cout << "   [Len/Xuong] Chuyen trang";
         cout << "   [Esc/Enter] Thoat\n";
@@ -422,6 +544,7 @@ void showTable(const string &title, const vector<string> &head, const vector<str
 }
 
 /* ===================== VAT TU (cay nhi phan tim kiem theo MAVT) ===================== */
+
 treeVT timVT(treeVT t, const string &ma) {
     while (t != NULL) {
         if (ma == t->vt.MAVT) return t;
