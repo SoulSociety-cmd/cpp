@@ -413,12 +413,22 @@ int soNgayTrongThang(int m, int y) {
 }
 
 bool parseDate(const string& s, int& d, int& m, int& y) {
-    if (s.size() != 10 || s[2] != '/' || s[5] != '/') return false;
+    if (s.size() != 10) return false;
+    bool iso = s[4] == '-' && s[7] == '-';
+    if (!iso && (s[2] != '/' || s[5] != '/')) return false;
     for (int i = 0; i < 10; i++)
-        if (i != 2 && i != 5 && !isdigit((unsigned char)s[i])) return false;
-    d = atoi(s.substr(0, 2).c_str());
-    m = atoi(s.substr(3, 2).c_str());
-    y = atoi(s.substr(6, 4).c_str());
+        if (i != (iso ? 4 : 2) && i != (iso ? 7 : 5) &&
+            !isdigit((unsigned char)s[i])) return false;
+    if (iso) {
+        y = atoi(s.substr(0, 4).c_str());
+        m = atoi(s.substr(5, 2).c_str());
+        d = atoi(s.substr(8, 2).c_str());
+    }
+    else {
+        d = atoi(s.substr(0, 2).c_str());
+        m = atoi(s.substr(3, 2).c_str());
+        y = atoi(s.substr(6, 4).c_str());
+    }
     if (y < 1900 || y > 2200 || m < 1 || m > 12) return false;
     return d >= 1 && d <= soNgayTrongThang(m, y);
 }
@@ -658,7 +668,7 @@ void inVatTuTon(treeVT dsvt) {
     vector<Vattu> ds;
     duyetLNR(dsvt, ds);
     stable_sort(ds.begin(), ds.end(), [](const Vattu& a, const Vattu& b) {
-        return a.TENVT < b.TENVT;
+        return a.MAVT < b.MAVT;
         });
     vector<string> head, rows, foot;
     head.push_back(colL("Ma VT", 12) + colL("Ten vat tu", 26) + colL("Don vi tinh", 14) +
