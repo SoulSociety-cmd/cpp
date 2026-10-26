@@ -665,6 +665,8 @@ void suaVatTu(treeVT& dsvt, DS_NV& dsnv) {
     cout << "\n  => Da cap nhat vat tu " << maMoi << ".\n";
 }
 
+void inVatTuCoTimKiem(treeVT dsvt);   
+
 void menuNhapVatTu(treeVT& dsvt, DS_NV& dsnv) {
     vector<string> m;
     m.push_back("In danh sach vat tu dang co");
@@ -677,14 +679,14 @@ void menuNhapVatTu(treeVT& dsvt, DS_NV& dsnv) {
         if (c == -1 || c == 4) return;
 
         if (c == 0) {
-            inVatTuTon(dsvt);   
+            inVatTuCoTimKiem(dsvt);
             continue;
         }
 
         while (true) {
             if (c == 1) themVatTu(dsvt);
             else if (c == 2) xoaVatTu(dsvt, dsnv);
-            else suaVatTu(dsvt);
+            else suaVatTu(dsvt, dsnv);
 
             cout << "\n  [Phim bat ky] Tiep tuc   [Esc] Quay lai menu";
             cout << flush;
