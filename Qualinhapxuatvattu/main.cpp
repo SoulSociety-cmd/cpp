@@ -137,7 +137,7 @@ void drawHeader(const string& title) {
     cout << "\n";
 }
 
-enum { K_UP = 1, K_DOWN, K_ENTER, K_ESC, K_OTHER };
+enum { K_UP = 1, K_DOWN, K_ENTER, K_ESC, K_OTHER, K_FIND };
 
 int getKey() {
 #ifdef _WIN32
@@ -150,6 +150,7 @@ int getKey() {
     }
     if (c == 13) return K_ENTER;
     if (c == 27) return K_ESC;
+    if (c == 't' || c == 'T' || c == '/') return K_FIND;
     return K_OTHER;
 #else
     termios oldt, newt;
@@ -181,6 +182,9 @@ int getKey() {
     }
     else if (c == '\n') {
         res = K_ENTER;
+    }
+    else if (c == 't' || c == 'T' || c == '/') {
+        res = K_FIND;
     }
     tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
     return res;
@@ -665,7 +669,7 @@ void suaVatTu(treeVT& dsvt, DS_NV& dsnv) {
     cout << "\n  => Da cap nhat vat tu " << maMoi << ".\n";
 }
 
-void inVatTuCoTimKiem(treeVT dsvt);   
+void inVatTuTon(treeVT dsvt);
 
 void menuNhapVatTu(treeVT& dsvt, DS_NV& dsnv) {
     vector<string> m;
@@ -679,7 +683,7 @@ void menuNhapVatTu(treeVT& dsvt, DS_NV& dsnv) {
         if (c == -1 || c == 4) return;
 
         if (c == 0) {
-            inVatTuCoTimKiem(dsvt);
+            inVatTuTon(dsvt);
             continue;
         }
 
@@ -696,51 +700,80 @@ void menuNhapVatTu(treeVT& dsvt, DS_NV& dsnv) {
 }
 
 void inVatTuTon(treeVT dsvt) {
-    vector<Vattu> ds;
-    duyetLNR(dsvt, ds);
-    stable_sort(ds.begin(), ds.end(), [](const Vattu& a, const Vattu& b) {
+    vector<Vattu> all;
+    duyetLNR(dsvt, all);
+    stable_sort(all.begin(), all.end(), [](const Vattu& a, const Vattu& b) {
         return a.TENVT < b.TENVT;
         });
-    vector<string> head, rows, foot;
-    head.push_back(colL("Ma VT", 12) + colL("Ten vat tu", 26) + colL("Don vi tinh", 14) +
-        colR("So luong ton", 12));
-    for (size_t i = 0; i < ds.size(); i++)
-        rows.push_back(colL(ds[i].MAVT, 12) + colL(ds[i].TENVT, 26) + colL(ds[i].DVT, 14) +
-            colR(to_string(ds[i].SOLUONGTON), 12));
-    foot.push_back("Tong: " + to_string(ds.size()) + " vat tu");
-    showTable("DANH SACH VAT TU TON KHO", head, rows, foot);
-}
 
-void inVatTuCoTimKiem(treeVT dsvt) {
-    vector<string> m;
-    m.push_back("Xem toan bo danh sach");
-    m.push_back("Tim kiem theo ma vat tu");
-    m.push_back("Quay lai");
+    const int w = 70, pageSize = 15;
+    string kw;      
+    int pg = 0;
+
     while (true) {
-        int c = selectMenu("DANH SACH VAT TU", m);
-        if (c == -1 || c == 2) return;
-        if (c == 0) {
-            inVatTuTon(dsvt);
-            continue;
+        vector<Vattu> ds;
+        for (size_t i = 0; i < all.size(); i++)
+            if (kw.empty() || all[i].MAVT.find(kw) != string::npos) ds.push_back(all[i]);
+
+        int total = (int)ds.size();
+        int pages = max(1, (total + pageSize - 1) / pageSize);
+        if (pg >= pages) pg = pages - 1;
+
+        clearScreen();
+        drawBox("DANH SACH VAT TU TON KHO", vector<string>(), w);
+        cout << "\n";
+        if (!kw.empty()) {
+            setConsoleColor(C_MAGENTA, true);
+            cout << "  Dang loc theo ma: \"" << kw << "\"  ->  " << total << " ket qua\n";
+            resetConsoleColor();
         }
-        drawHeader("TIM VAT TU THEO MA");
-        string kw = toUpper(inputStr("Nhap ma vat tu can tim"));
+        setConsoleColor(C_YELLOW, true);
+        cout << "  " << colL("Ma VT", 12) + colL("Ten vat tu", 26) + colL("Don vi tinh", 14) +
+            colR("So luong ton", 12) << "\n";
+        resetConsoleColor();
+        setConsoleColor(C_CYAN, true);
+        cout << "  " << string(w, '-') << "\n";
+        resetConsoleColor();
+        if (total == 0) {
+            setConsoleColor(C_YELLOW, true);
+            cout << "  (Khong co du lieu)\n";
+            resetConsoleColor();
+        }
+        for (int i = pg * pageSize; i < min(total, (pg + 1) * pageSize); i++) {
+            setConsoleColor(C_WHITE, false);
+            cout << "  " << colL(ds[i].MAVT, 12) + colL(ds[i].TENVT, 26) + colL(ds[i].DVT, 14) +
+                colR(to_string(ds[i].SOLUONGTON), 12) << "\n";
+            resetConsoleColor();
+        }
+        setConsoleColor(C_CYAN, true);
+        cout << "  " << string(w, '-') << "\n";
+        resetConsoleColor();
+        if (pg == pages - 1) {
+            setConsoleColor(C_GREEN, true);
+            cout << "  Tong: " << total << " vat tu\n";
+            resetConsoleColor();
+        }
+        cout << "\n  Trang " << (pg + 1) << "/" << pages;
+        if (pages > 1) cout << "   [Len/Xuong] Chuyen trang";
+        cout << "   [T] Tim theo ma   [Esc/Enter] Thoat\n";
 
-        vector<Vattu> ds, kq;
-        duyetLNR(dsvt, ds);
-        for (size_t i = 0; i < ds.size(); i++)
-            if (ds[i].MAVT.find(kw) != string::npos) kq.push_back(ds[i]);
-
-        vector<string> head, rows, foot;
-        head.push_back(colL("Ma VT", 12) + colL("Ten vat tu", 26) + colL("Don vi tinh", 14) +
-            colR("So luong ton", 12));
-        for (size_t i = 0; i < kq.size(); i++)
-            rows.push_back(colL(kq[i].MAVT, 12) + colL(kq[i].TENVT, 26) + colL(kq[i].DVT, 14) +
-                colR(to_string(kq[i].SOLUONGTON), 12));
-        foot.push_back("Tim thay: " + to_string(kq.size()) + " vat tu (tu khoa: " + kw + ")");
-        showTable("KET QUA TIM KIEM", head, rows, foot);
+        int k = getKey();
+        if (k == K_ESC) break;
+        if (k == K_FIND) {
+            cout << "\n";
+            kw = toUpper(inputStr("Nhap ma can tim (Enter = xem tat ca)", 0, true));
+            pg = 0;
+        }
+        else if (k == K_DOWN || k == K_ENTER) {
+            if (pg < pages - 1) pg++;
+            else if (k == K_ENTER) break;
+        }
+        else if (k == K_UP && pg > 0) {
+            pg--;
+        }
     }
 }
+
 int timNV(const DS_NV& ds, const string& ma) {
     for (int i = 0; i < ds.n; i++)
         if (ds.nodes[i]->MANV == ma) return i;
