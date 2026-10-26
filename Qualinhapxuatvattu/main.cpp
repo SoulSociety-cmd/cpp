@@ -7,68 +7,27 @@
 #include <termios.h>
 #include <unistd.h>
 #endif
-#include <iostream>
-#include <string>
-#include <vector>
-#include <fstream>
-#include <sstream>
-#include <iomanip>
-#include <cmath>
+
+#include "app.h"
+#include "giao_dien.h"
+#include "vat_tu.h"
+#include "nhan_vien.h"
+#include "hoa_don.h"
+#include "thong_ke.h"
+#include "luu_doc_file.h"
+
 #include <algorithm>
-#include <map>
 #include <cctype>
+#include <cmath>
 #include <cstdlib>
+#include <fstream>
+#include <iomanip>
+#include <iostream>
+#include <map>
+#include <sstream>
+#include <vector>
+
 using namespace std;
-
-const int MAXNV = 500;
-
-struct Vattu {
-    string MAVT, TENVT, DVT;
-    int SOLUONGTON;
-};
-
-struct nodeVT {
-    Vattu vt;
-    nodeVT* left;
-    nodeVT* right;
-};
-typedef nodeVT* treeVT;
-
-struct CT_HOADON {
-    string MAVT;
-    int SOLUONG;
-    float DONGIA;
-    float VAT;
-};
-
-struct nodeCTHD {
-    CT_HOADON cthd;
-    nodeCTHD* next;
-};
-typedef nodeCTHD* PTRCTHD;
-
-struct HOADON {
-    string SOHD;
-    string NGAYLAP;
-    char LOAI;
-    PTRCTHD dscthd = NULL;
-};
-
-struct nodeHD {
-    HOADON hd;
-    nodeHD* next;
-};
-typedef nodeHD* PTRHD;
-
-struct Nhanvien {
-    string MANV, HO, TEN, PHAI;
-    PTRHD dshd = NULL;
-};
-
-struct DS_NV {
-    Nhanvien* nodes[MAXNV];
-    int n = 0;
-};
 
 void clearScreen() {
 #ifdef _WIN32
@@ -89,7 +48,7 @@ enum ConsoleColor {
     C_WHITE = 37
 };
 
-void setConsoleColor(int fg, bool bold = false) {
+void setConsoleColor(int fg, bool bold) {
 #ifdef _WIN32
     HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
     WORD attr = 0;
@@ -138,7 +97,7 @@ void pauseScreen() {
     getKey();
 }
 
-void drawBox(const string& title, const vector<string>& lines, int w = 56) {
+void drawBox(const string& title, const vector<string>& lines, int w) {
     string bar(w, '=');
     setConsoleColor(C_CYAN, true);
     cout << "  +" << bar << "+\n";
@@ -291,7 +250,7 @@ void drawItem(const string& text, bool selected, int w) {
 }
 
 int selectMenu(const string& title, const vector<string>& items,
-    const vector<string>& info = vector<string>(), int w = 56) {
+    const vector<string>& info, int w) {
     int n = (int)items.size();
     int cur = 0;
 
@@ -354,7 +313,7 @@ int selectMenu(const string& title, const vector<string>& items,
     return result;
 }
 
-string inputStr(const string& label, size_t maxLen = 0, bool allowEmpty = false) {
+string inputStr(const string& label, size_t maxLen, bool allowEmpty) {
     string s;
     while (true) {
         setConsoleColor(C_GREEN, true);
@@ -407,7 +366,7 @@ int inputInt(const string& label, int lo, int hi) {
     }
 }
 
-bool confirm(const string& q, const vector<string>& info = vector<string>()) {
+bool confirm(const string& q, const vector<string>& info) {
     vector<string> opt;
     opt.push_back("Khong");
     opt.push_back("Co");
@@ -495,7 +454,7 @@ double inputDouble(const string& label, double lo, double hi, bool loExclusive) 
 }
 
 void showTable(const string& title, const vector<string>& head, const vector<string>& rows,
-    const vector<string>& foot, int w = 72, int pageSize = 15) {
+    const vector<string>& foot, int w, int pageSize) {
     int total = (int)rows.size();
     int pages = max(1, (total + pageSize - 1) / pageSize);
     int pg = 0;
@@ -544,7 +503,6 @@ void showTable(const string& title, const vector<string>& head, const vector<str
         }
     }
 }
-
 treeVT timVT(treeVT t, const string& ma) {
     while (t != NULL) {
         if (ma == t->vt.MAVT) return t;
@@ -670,17 +628,29 @@ void suaVatTu(treeVT& dsvt) {
 
 void menuNhapVatTu(treeVT& dsvt, DS_NV& dsnv) {
     vector<string> m;
+    m.push_back("In danh sach vat tu dang co");
     m.push_back("Them vat tu");
     m.push_back("Xoa vat tu");
     m.push_back("Hieu chinh vat tu");
     m.push_back("Quay lai");
     while (true) {
         int c = selectMenu("NHAP VAT TU", m);
-        if (c == -1 || c == 3) return;
-        if (c == 0) themVatTu(dsvt);
-        else if (c == 1) xoaVatTu(dsvt, dsnv);
-        else suaVatTu(dsvt);
-        pauseScreen();
+        if (c == -1 || c == 4) return;
+
+        if (c == 0) {
+            inVatTuTon(dsvt);   
+            continue;
+        }
+
+        while (true) {
+            if (c == 1) themVatTu(dsvt);
+            else if (c == 2) xoaVatTu(dsvt, dsnv);
+            else suaVatTu(dsvt);
+
+            cout << "\n  [Phim bat ky] Tiep tuc   [Esc] Quay lai menu";
+            cout << flush;
+            if (getKey() == K_ESC) break;
+        }
     }
 }
 
@@ -699,7 +669,6 @@ void inVatTuTon(treeVT dsvt) {
     foot.push_back("Tong: " + to_string(ds.size()) + " vat tu");
     showTable("DANH SACH VAT TU TON KHO", head, rows, foot);
 }
-
 int timNV(const DS_NV& ds, const string& ma) {
     for (int i = 0; i < ds.n; i++)
         if (ds.nodes[i]->MANV == ma) return i;
@@ -782,8 +751,7 @@ void giaiPhongNV(DS_NV& ds) {
     }
     ds.n = 0;
 }
-
-PTRHD timHD(const DS_NV& ds, const string& so, int* idx = NULL) {
+PTRHD timHD(const DS_NV& ds, const string& so, int* idx) {
     for (int i = 0; i < ds.n; i++)
         for (PTRHD h = ds.nodes[i]->dshd; h != NULL; h = h->next)
             if (h->hd.SOHD == so) {
@@ -1165,7 +1133,6 @@ void doanhThuNam(const DS_NV& dsnv) {
     foot.push_back(colL("CA NAM", 12) + colR(fmtMoney(tong), 24));
     showTable("BANG THONG KE DOANH THU NAM " + to_string(nam), head, rows, foot, 40, 12);
 }
-
 const string DEFAULT_FILE = "QLVT.txt";
 
 void ghiCay(ofstream& f, treeVT t) {
@@ -1362,7 +1329,6 @@ void menuFile(treeVT& dsvt, DS_NV& dsnv) {
         pauseScreen();
     }
 }
-
 int demVT(treeVT t) { return t == NULL ? 0 : 1 + demVT(t->left) + demVT(t->right); }
 
 int demHD(const DS_NV& ds) {
