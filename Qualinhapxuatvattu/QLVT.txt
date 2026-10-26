@@ -1,0 +1,133 @@
+V|VT001|Xi mang PCB40|Bao|1200
+V|VT002|Thep phi 10|Kg|850
+V|VT003|Thep phi 12|Kg|920
+V|VT004|Thep phi 16|Kg|700
+V|VT005|Cat vang|m3|150
+V|VT006|Cat den|m3|100
+V|VT007|Da 1x2|m3|180
+V|VT008|Da 4x6|m3|95
+V|VT009|Gach do|Vien|12000
+V|VT010|Gach block|Vien|6000
+V|VT011|Son lot|Lit|220
+V|VT012|Son trang|Lit|180
+V|VT013|Son xanh|Lit|95
+V|VT014|Son vang|Lit|75
+V|VT015|Ong nhua PVC 21|Cay|300
+V|VT016|Ong nhua PVC 27|Cay|250
+V|VT017|Ong nhua PVC 34|Cay|200
+V|VT018|Day dien 1.5|Met|1500
+V|VT019|Day dien 2.5|Met|1200
+V|VT020|Day dien 4.0|Met|800
+V|VT021|Cong tac don|Cai|150
+V|VT022|Cong tac doi|Cai|100
+V|VT023|O cam doi|Cai|180
+V|VT024|Bong den LED 9W|Cai|240
+V|VT025|Bong den LED 12W|Cai|200
+V|VT026|Aptomat 20A|Cai|80
+V|VT027|Aptomat 32A|Cai|60
+V|VT028|Van nuoc 21|Cai|90
+V|VT029|Van nuoc 27|Cai|75
+V|VT030|Voi rua inox|Cai|35
+V|VT031|Bon cau|Bo|25
+V|VT032|Lavabo|Bo|30
+V|VT033|Gach men 30x30|m2|450
+V|VT034|Gach men 60x60|m2|320
+V|VT035|Da granite den|m2|90
+V|VT036|Da granite trang|m2|85
+V|VT037|Go plywood 9mm|Tam|120
+V|VT038|Go plywood 12mm|Tam|100
+V|VT039|Van MDF  MDF|Tam|70
+V|VT040|Dinh thep 3cm|Kg|60
+V|VT041|Dinh thep 5cm|Kg|55
+V|VT042|Vit go 3cm|Hop|45
+V|VT043|Vit go 5cm|Hop|40
+V|VT044|Keo dan gach|Bao|150
+V|VT045|Bot cha tuong|Bao|180
+V|VT046|Thach cao|Tam|200
+V|VT047|Khung xuong tran|Thanh|350
+V|VT048|Ton lanh|m2|260
+V|VT049|Xa go thep|Cay|140
+V|VT050|Luoi thep|Cuon|45
+V|VT051|Day cap mang|Met|900
+V|VT052|Day cap dong truc|Met|500
+V|VT053|Ong ruot ga|Met|400
+V|VT054|Hop noi day|Cai|220
+V|VT055|Bang keo dien|Cuon|300
+V|VT056|Bang tan|Cuon|180
+V|VT057|Bulong M8|Cai|500
+V|VT058|Bulong M10|Cai|420
+V|VT059|Dai oc M8|Cai|600
+V|VT060|Dai oc M10|Cai|500
+V|VT061|Long den M8|Cai|550
+V|VT062|Long den M10|Cai|450
+V|VT063|Son chong ri|Lit|90
+V|VT064|Dung moi|Lit|65
+V|VT065|Co PVC 21|Cai|250
+V|VT066|Co PVC 27|Cai|220
+V|VT067|Te PVC 21|Cai|180
+V|VT068|Te PVC 27|Cai|160
+V|VT069|Noi thang PVC 21|Cai|200
+V|VT070|Noi thang PVC 27|Cai|170
+V|VT071|Day cap dien 6.0|Met|650
+V|VT072|Day cap dien 10|Met|400
+V|VT073|Cau chi 10A|Cai|120
+V|VT074|Cau chi 20A|Cai|100
+V|VT075|Quat hut gio|Cai|40
+V|VT076|Quat tran|Cai|25
+V|VT077|May bom nuoc|Cai|18
+V|VT078|Ong thep ma kem|Cay|130
+V|VT079|Ong thep den|Cay|90
+V|VT080|Luu dien mini|Cai|15
+V|VT081|Khoa cua tay gat|Bo|50
+V|VT082|Ban le inox|Cai|200
+V|VT083|Tay nam cua|Cai|120
+V|VT084|Kinh cuong luc 8mm|m2|65
+V|VT085|Kinh cuong luc 10mm|m2|50
+V|VT086|Silicon trong|Tuyp|140
+V|VT087|Silicon trang|Tuyp|120
+V|VT088|Foam cach nhiet|Binh|75
+V|VT089|Mut xop PE|Cuon|55
+V|VT090|Luoi chong muoi|m2|100
+V|VT091|Thang nhom|Cai|12
+V|VT092|Day an toan|Bo|20
+V|VT093|Mu bao ho|Cai|80
+V|VT094|Gang tay bao ho|Doi|150
+V|VT095|Kinh bao ho|Cai|70
+V|VT096|Ao phan quang|Cai|45
+V|VT097|Binh chua chay|Binh|25
+V|VT098|Bang canh bao|Cai|60
+V|VT099|Cay lau nha|Cai|35
+V|VT100|Thung rac|Cai|28
+V|VT101|Choi quet|Cai|40
+V|VT102|Xeng xuc cat|Cai|22
+V|VT103|Xe day hang|Cai|8
+V|VT104|Banh xe day|Cai|16
+V|VT105|Day thung|Cuon|30
+V|VT106|Bat che cong trinh|Tam|40
+V|VT107|Luoi bao cong trinh|Cuon|18
+V|VT108|Moc treo|Cai|100
+V|VT109|Ke sat|Cai|75
+V|VT110|Gia do ong|Cai|90
+N|NV001|Nguyen Van|An|Nam
+H|HD000000000000000001|2026-10-01|N
+C|VT001|100|85000|10
+C|VT002|50|22000|8
+C|VT005|10|180000|10
+H|HD000000000000000002|2026-10-05|X
+C|VT001|20|95000|10
+C|VT002|10|25000|8
+N|NV002|Tran Thi|Binh|Nu
+H|HD000000000000000003|2026-10-08|N
+C|VT009|2000|1500|10
+C|VT033|30|125000|10
+H|HD000000000000000004|2026-10-12|X
+C|VT009|500|1800|10
+C|VT033|5|135000|10
+N|NV003|Le Quoc|Cuong|Nam
+H|HD000000000000000005|2026-10-15|N
+C|VT018|300|6500|10
+C|VT021|20|35000|10
+N|NV004|Pham Minh|Dung|Nam
+H|HD000000000000000006|2026-10-20|X
+C|VT018|50|7000|10
+C|VT024|12|45000|10
