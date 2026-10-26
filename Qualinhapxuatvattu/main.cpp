@@ -693,20 +693,35 @@ void menuNhapVatTu(treeVT& dsvt, DS_NV& dsnv) {
     }
 }
 
-void inVatTuTon(treeVT dsvt) {
-    vector<Vattu> ds;
-    duyetLNR(dsvt, ds);
-    stable_sort(ds.begin(), ds.end(), [](const Vattu& a, const Vattu& b) {
-        return a.MAVT < b.MAVT;
-        });
-    vector<string> head, rows, foot;
-    head.push_back(colL("Ma VT", 12) + colL("Ten vat tu", 26) + colL("Don vi tinh", 14) +
-        colR("So luong ton", 12));
-    for (size_t i = 0; i < ds.size(); i++)
-        rows.push_back(colL(ds[i].MAVT, 12) + colL(ds[i].TENVT, 26) + colL(ds[i].DVT, 14) +
-            colR(to_string(ds[i].SOLUONGTON), 12));
-    foot.push_back("Tong: " + to_string(ds.size()) + " vat tu");
-    showTable("DANH SACH VAT TU TON KHO", head, rows, foot);
+void inVatTuCoTimKiem(treeVT dsvt) {
+    vector<string> m;
+    m.push_back("Xem toan bo danh sach");
+    m.push_back("Tim kiem theo ma vat tu");
+    m.push_back("Quay lai");
+    while (true) {
+        int c = selectMenu("DANH SACH VAT TU", m);
+        if (c == -1 || c == 2) return;
+        if (c == 0) {
+            inVatTuTon(dsvt);
+            continue;
+        }
+        drawHeader("TIM VAT TU THEO MA");
+        string kw = toUpper(inputStr("Nhap ma vat tu can tim"));
+
+        vector<Vattu> ds, kq;
+        duyetLNR(dsvt, ds);
+        for (size_t i = 0; i < ds.size(); i++)
+            if (ds[i].MAVT.find(kw) != string::npos) kq.push_back(ds[i]);
+
+        vector<string> head, rows, foot;
+        head.push_back(colL("Ma VT", 12) + colL("Ten vat tu", 26) + colL("Don vi tinh", 14) +
+            colR("So luong ton", 12));
+        for (size_t i = 0; i < kq.size(); i++)
+            rows.push_back(colL(kq[i].MAVT, 12) + colL(kq[i].TENVT, 26) + colL(kq[i].DVT, 14) +
+                colR(to_string(kq[i].SOLUONGTON), 12));
+        foot.push_back("Tim thay: " + to_string(kq.size()) + " vat tu (tu khoa: " + kw + ")");
+        showTable("KET QUA TIM KIEM", head, rows, foot);
+    }
 }
 int timNV(const DS_NV& ds, const string& ma) {
     for (int i = 0; i < ds.n; i++)
