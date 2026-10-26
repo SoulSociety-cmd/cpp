@@ -324,7 +324,7 @@ bool docDong(string& s) {
 #ifdef _WIN32
     while (true) {
         int c = _getch();
-        if (c == 0 || c == 224) { _getch(); continue; }   
+        if (c == 0 || c == 224) { _getch(); continue; }   // bỏ qua phím mũi tên
         if (c == 13) { cout << "\n"; return true; }
         if (c == 27) { cout << "\n"; return false; }
         if (c == 8) {
@@ -354,9 +354,9 @@ bool docDong(string& s) {
             newt.c_cc[VMIN] = 1;
             newt.c_cc[VTIME] = 0;
             tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-            if (c2 == '[') { getchar(); continue; }       
+            if (c2 == '[') { getchar(); continue; }       // phím mũi tên -> bỏ qua
             clearerr(stdin);
-            result = false;                                
+            result = false;                                // Esc thật
             break;
         }
         if (c == 127 || c == 8) {
@@ -378,7 +378,7 @@ string inputStr(const string& label, size_t maxLen, bool allowEmpty) {
         cout << "  " << label;
         resetConsoleColor();
         cout << ": ";
-        getline(cin, s);
+        if (!docDong(s)) throw HuyNhap();
         s = trim(s);
         if (s.empty() && !allowEmpty) {
             setConsoleColor(C_RED, true);
@@ -409,7 +409,7 @@ int inputInt(const string& label, int lo, int hi) {
         cout << "  " << label;
         resetConsoleColor();
         cout << ": ";
-        getline(cin, s);
+        if (!docDong(s)) throw HuyNhap();
         s = trim(s);
         bool ok = !s.empty() && s.size() < 10;
         for (size_t i = 0; i < s.size() && ok; i++)
