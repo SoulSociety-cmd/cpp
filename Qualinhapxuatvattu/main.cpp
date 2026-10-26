@@ -618,7 +618,7 @@ void xoaVatTu(treeVT& dsvt, const DS_NV& dsnv) {
     }
 }
 
-void suaVatTu(treeVT& dsvt) {
+void suaVatTu(treeVT& dsvt, DS_NV& dsnv) {
     drawHeader("HIEU CHINH VAT TU");
     string ma = toUpper(inputStr("Ma vat tu can sua", 10));
     treeVT p = timVT(dsvt, ma);
@@ -626,14 +626,43 @@ void suaVatTu(treeVT& dsvt) {
         cout << "\n  ! Khong tim thay ma vat tu.\n";
         return;
     }
-    cout << "  Hien tai -> Ten: " << p->vt.TENVT << " | DVT: " << p->vt.DVT
-        << " | Ton: " << p->vt.SOLUONGTON << " (khong duoc sua)\n";
-    cout << "  (De trong de giu nguyen)\n";
+    Vattu cu = p->vt;
+    cout << "  Hien tai -> Ma: " << cu.MAVT << " | Ten: " << cu.TENVT
+        << " | DVT: " << cu.DVT << " | Ton: " << cu.SOLUONGTON << " (khong duoc sua)\n";
+    cout << "  (Nhan Enter de giu nguyen gia tri cu)\n";
+
+    string maMoi;
+    while (true) {
+        maMoi = toUpper(inputStr("Ma vat tu moi", 10, true));
+        if (maMoi.empty()) maMoi = cu.MAVT;
+        if (maMoi != cu.MAVT && timVT(dsvt, maMoi) != NULL) {
+            setConsoleColor(C_RED, true);
+            cout << "  ! Ma vat tu da ton tai.\n";
+            resetConsoleColor();
+            continue;
+        }
+        break;
+    }
     string ten = inputStr("Ten vat tu moi", 0, true);
     string dvt = inputStr("Don vi tinh moi", 0, true);
-    if (!ten.empty()) p->vt.TENVT = ten;
-    if (!dvt.empty()) p->vt.DVT = dvt;
-    cout << "\n  => Da cap nhat.\n";
+
+    Vattu moi = cu;
+    moi.MAVT = maMoi;
+    if (!ten.empty()) moi.TENVT = ten;
+    if (!dvt.empty()) moi.DVT = dvt;
+
+    if (maMoi == cu.MAVT) {
+        p->vt = moi;              
+    }
+    else {
+        xoaVT(dsvt, cu.MAVT);
+        themVT(dsvt, moi);
+        for (int i = 0; i < dsnv.n; i++)
+            for (PTRHD h = dsnv.nodes[i]->dshd; h != NULL; h = h->next)
+                for (PTRCTHD c = h->hd.dscthd; c != NULL; c = c->next)
+                    if (c->cthd.MAVT == cu.MAVT) c->cthd.MAVT = maMoi;
+    }
+    cout << "\n  => Da cap nhat vat tu " << maMoi << ".\n";
 }
 
 void menuNhapVatTu(treeVT& dsvt, DS_NV& dsnv) {
