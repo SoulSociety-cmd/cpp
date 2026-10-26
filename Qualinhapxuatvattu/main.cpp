@@ -324,7 +324,7 @@ bool docDong(string& s) {
 #ifdef _WIN32
     while (true) {
         int c = _getch();
-        if (c == 0 || c == 224) { _getch(); continue; }   // bỏ qua phím mũi tên
+        if (c == 0 || c == 224) { _getch(); continue; }   
         if (c == 13) { cout << "\n"; return true; }
         if (c == 27) { cout << "\n"; return false; }
         if (c == 8) {
@@ -354,9 +354,9 @@ bool docDong(string& s) {
             newt.c_cc[VMIN] = 1;
             newt.c_cc[VTIME] = 0;
             tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-            if (c2 == '[') { getchar(); continue; }       // phím mũi tên -> bỏ qua
+            if (c2 == '[') { getchar(); continue; }       
             clearerr(stdin);
-            result = false;                                // Esc thật
+            result = false;                                
             break;
         }
         if (c == 127 || c == 8) {
