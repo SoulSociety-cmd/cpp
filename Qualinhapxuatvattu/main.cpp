@@ -316,6 +316,60 @@ int selectMenu(const string& title, const vector<string>& items,
     cout << flush;
     return result;
 }
+struct HuyNhap {};    
+
+bool docDong(string& s) {
+    s.clear();
+    cout << flush;
+#ifdef _WIN32
+    while (true) {
+        int c = _getch();
+        if (c == 0 || c == 224) { _getch(); continue; }   // bỏ qua phím mũi tên
+        if (c == 13) { cout << "\n"; return true; }
+        if (c == 27) { cout << "\n"; return false; }
+        if (c == 8) {
+            if (!s.empty()) { s.pop_back(); cout << "\b \b" << flush; }
+            continue;
+        }
+        if (c >= 32 && c < 127) { s += (char)c; cout << (char)c << flush; }
+    }
+#else
+    termios oldt, newt;
+    tcgetattr(STDIN_FILENO, &oldt);
+    newt = oldt;
+    newt.c_lflag &= ~(ICANON | ECHO);
+    newt.c_cc[VMIN] = 1;
+    newt.c_cc[VTIME] = 0;
+    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+    bool result = true;
+    while (true) {
+        int c = getchar();
+        if (c == EOF) { clearerr(stdin); result = false; break; }
+        if (c == '\n') break;
+        if (c == 27) {
+            newt.c_cc[VMIN] = 0;
+            newt.c_cc[VTIME] = 1;
+            tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+            int c2 = getchar();
+            newt.c_cc[VMIN] = 1;
+            newt.c_cc[VTIME] = 0;
+            tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+            if (c2 == '[') { getchar(); continue; }       // phím mũi tên -> bỏ qua
+            clearerr(stdin);
+            result = false;                                // Esc thật
+            break;
+        }
+        if (c == 127 || c == 8) {
+            if (!s.empty()) { s.pop_back(); cout << "\b \b" << flush; }
+            continue;
+        }
+        if (c >= 32 && c < 127) { s += (char)c; cout << (char)c << flush; }
+    }
+    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+    cout << "\n";
+    return result;
+#endif
+}
 
 string inputStr(const string& label, size_t maxLen, bool allowEmpty) {
     string s;
@@ -703,7 +757,7 @@ void inVatTuTon(treeVT dsvt) {
     vector<Vattu> all;
     duyetLNR(dsvt, all);
     stable_sort(all.begin(), all.end(), [](const Vattu& a, const Vattu& b) {
-        return a.TENVT < b.TENVT;
+        return a.MAVT < b.MAVT;
         });
 
     const int w = 70, pageSize = 15;
