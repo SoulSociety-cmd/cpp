@@ -695,6 +695,22 @@ void menuNhapVatTu(treeVT& dsvt, DS_NV& dsnv) {
     }
 }
 
+void inVatTuTon(treeVT dsvt) {
+    vector<Vattu> ds;
+    duyetLNR(dsvt, ds);
+    stable_sort(ds.begin(), ds.end(), [](const Vattu& a, const Vattu& b) {
+        return a.TENVT < b.TENVT;
+        });
+    vector<string> head, rows, foot;
+    head.push_back(colL("Ma VT", 12) + colL("Ten vat tu", 26) + colL("Don vi tinh", 14) +
+        colR("So luong ton", 12));
+    for (size_t i = 0; i < ds.size(); i++)
+        rows.push_back(colL(ds[i].MAVT, 12) + colL(ds[i].TENVT, 26) + colL(ds[i].DVT, 14) +
+            colR(to_string(ds[i].SOLUONGTON), 12));
+    foot.push_back("Tong: " + to_string(ds.size()) + " vat tu");
+    showTable("DANH SACH VAT TU TON KHO", head, rows, foot);
+}
+
 void inVatTuCoTimKiem(treeVT dsvt) {
     vector<string> m;
     m.push_back("Xem toan bo danh sach");
@@ -1438,7 +1454,7 @@ int main() {
         else if (c == 7) top10VatTu(dsvt, dsnv);
         else if (c == 8) doanhThuNam(dsnv);
         else if (c == 9) menuFile(dsvt, dsnv);
-        else {  // Thoat hoac Esc
+        else {  
             vector<string> em;
             em.push_back("Luu va thoat");
             em.push_back("Thoat khong luu");
