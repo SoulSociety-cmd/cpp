@@ -134,6 +134,9 @@ void drawBox(const string& title, const vector<string>& lines, int w) {
 void drawHeader(const string& title) {
     clearScreen();
     drawBox(title, vector<string>());
+    setConsoleColor(C_YELLOW, false);
+    cout << "  (Nhan [Esc] o bat ky o nhap nao de huy va quay lai)\n";
+    resetConsoleColor();
     cout << "\n";
 }
 
@@ -741,10 +744,13 @@ void menuNhapVatTu(treeVT& dsvt, DS_NV& dsnv) {
             continue;
         }
 
-        while (true) {
-            if (c == 1) themVatTu(dsvt);
-            else if (c == 2) xoaVatTu(dsvt, dsnv);
-            else suaVatTu(dsvt, dsnv);
+         while (true) {
+            try {
+                if (c == 1) themVatTu(dsvt);
+                else if (c == 2) xoaVatTu(dsvt, dsnv);
+                else suaVatTu(dsvt, dsnv);
+            }
+            catch (const HuyNhap&) { break; }
 
             cout << "\n  [Phim bat ky] Tiep tuc   [Esc] Quay lai menu";
             cout << flush;
@@ -813,9 +819,11 @@ void inVatTuTon(treeVT dsvt) {
 
         int k = getKey();
         if (k == K_ESC) break;
-        if (k == K_FIND) {
+            if (k == K_FIND) {
             cout << "\n";
-            kw = toUpper(inputStr("Nhap ma can tim (Enter = xem tat ca)", 0, true));
+            try {
+                kw = toUpper(inputStr("Nhap ma can tim (Enter = xem tat ca)", 0, true));
+            } catch (const HuyNhap&) {}
             pg = 0;
         }
         else if (k == K_DOWN || k == K_ENTER) {
@@ -853,24 +861,25 @@ void nhapNhanVien(DS_NV& dsnv) {
         return;
     }
     cout << "  Hien co: " << dsnv.n << "/" << MAXNV << " nhan vien\n\n";
-    string ma = toUpper(inputStr("Ma nhan vien"));
+        string ma = toUpper(inputStr("Ma nhan vien"));
     if (timNV(dsnv, ma) >= 0) {
         cout << "\n  ! Ma nhan vien da ton tai.\n";
         return;
     }
-    Nhanvien* nv = new Nhanvien;
-    nv->MANV = ma;
-    nv->HO = inputStr("Ho");
-    nv->TEN = inputStr("Ten");
+    string ho = inputStr("Ho");
+    string ten = inputStr("Ten");
     vector<string> gm, gi;
     gm.push_back("Nam");
     gm.push_back("Nu");
-    gi.push_back("Ma NV: " + nv->MANV);
-    gi.push_back("Ho ten: " + nv->HO + " " + nv->TEN);
-    int g;
-    do {
-        g = selectMenu("CHON PHAI", gm, gi);
-    } while (g < 0);
+    gi.push_back("Ma NV: " + ma);
+    gi.push_back("Ho ten: " + ho + " " + ten);
+    int g = selectMenu("CHON PHAI", gm, gi);
+    if (g < 0) throw HuyNhap();            // Esc -> huy, chua cap phat gi
+
+    Nhanvien* nv = new Nhanvien;
+    nv->MANV = ma;
+    nv->HO = ho;
+    nv->TEN = ten;
     nv->PHAI = (g == 0) ? "Nam" : "Nu";
     nv->dshd = NULL;
     chenNV(dsnv, nv);
@@ -1529,31 +1538,35 @@ int main() {
         info.push_back("Vat tu: " + to_string(demVT(dsvt)) + " | Nhan vien: " + to_string(dsnv.n) +
             " | Hoa don: " + to_string(demHD(dsnv)));
         if (!loadMsg.empty()) info.push_back(loadMsg);
-        int c = selectMenu("QUAN LY NHAP XUAT VAT TU", m, info);
+                int c = selectMenu("QUAN LY NHAP XUAT VAT TU", m, info);
 
-        if (c == 0) menuNhapVatTu(dsvt, dsnv);
-        else if (c == 1) inVatTuTon(dsvt);
-        else if (c == 2) { nhapNhanVien(dsnv); pauseScreen(); }
-        else if (c == 3) inNhanVien(dsnv);
-        else if (c == 4) lapHoaDon(dsvt, dsnv);
-        else if (c == 5) inHoaDon(dsvt, dsnv);
-        else if (c == 6) thongKeHoaDon(dsnv);
-        else if (c == 7) top10VatTu(dsvt, dsnv);
-        else if (c == 8) doanhThuNam(dsnv);
-        else if (c == 9) menuFile(dsvt, dsnv);
-        else {  
-            vector<string> em;
-            em.push_back("Luu va thoat");
-            em.push_back("Thoat khong luu");
-            em.push_back("Quay lai");
-            int e = selectMenu("THOAT CHUONG TRINH", em);
-            if (e == 0) {
-                if (luuFile(DEFAULT_FILE, dsvt, dsnv)) break;
-                drawHeader("LOI");
-                cout << "  ! Khong ghi duoc file " << DEFAULT_FILE << ".\n";
-                pauseScreen();
+        try {
+            if (c == 0) menuNhapVatTu(dsvt, dsnv);
+            else if (c == 1) inVatTuTon(dsvt);
+            else if (c == 2) { nhapNhanVien(dsnv); pauseScreen(); }
+            else if (c == 3) inNhanVien(dsnv);
+            else if (c == 4) lapHoaDon(dsvt, dsnv);
+            else if (c == 5) inHoaDon(dsvt, dsnv);
+            else if (c == 6) thongKeHoaDon(dsnv);
+            else if (c == 7) top10VatTu(dsvt, dsnv);
+            else if (c == 8) doanhThuNam(dsnv);
+            else if (c == 9) menuFile(dsvt, dsnv);
+            else {
+                vector<string> em;
+                em.push_back("Luu va thoat");
+                em.push_back("Thoat khong luu");
+                em.push_back("Quay lai");
+                int e = selectMenu("THOAT CHUONG TRINH", em);
+                if (e == 0) {
+                    if (luuFile(DEFAULT_FILE, dsvt, dsnv)) break;
+                    drawHeader("LOI");
+                    cout << "  ! Khong ghi duoc file " << DEFAULT_FILE << ".\n";
+                    pauseScreen();
+                }
+                else if (e == 1) break;
             }
-            else if (e == 1) break;
+        }
+        catch (const HuyNhap&) {
         }
     }
 
