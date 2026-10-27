@@ -12,7 +12,7 @@ void giaiPhongCay(treeVT& t);
 bool vattuDaDuocDung(const DS_NV& ds, const std::string& ma);
 void themVatTu(treeVT& dsvt);
 void xoaVatTu(treeVT& dsvt, const DS_NV& dsnv);
-void suaVatTu(treeVT& dsvt);
+void suaVatTu(treeVT& dsvt, DS_NV& dsnv);
 void menuNhapVatTu(treeVT& dsvt, DS_NV& dsnv);
 void inVatTuTon(treeVT dsvt);
 
