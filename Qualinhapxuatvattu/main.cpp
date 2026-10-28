@@ -672,10 +672,10 @@ void xoaVatTu(treeVT& dsvt, const DS_NV& dsnv) {
     inf.push_back("Ma: " + ma + " | Ten: " + p->vt.TENVT + " | Ton: " + to_string(p->vt.SOLUONGTON));
     if (confirm("Xac nhan xoa vat tu?", inf)) {
         xoaVT(dsvt, ma);
-        cout << "\n  => Da xoa vat tu " << ma << ".\n";
+        cout << "\n\n\n\n\n  => Da xoa vat tu " << ma << ".\n";
     }
     else {
-        cout << "\n  Da huy.\n";
+        cout << "\n\n\n  Da huy.\n";
     }
 }
 
